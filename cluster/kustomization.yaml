@@ -4,3 +4,4 @@ bases:
   - ./ingress/
   - ./metallb/
   - ./metrics/
+  - ./storage/
