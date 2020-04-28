@@ -7,4 +7,3 @@ bases:
   - ./storage/
   - ./registry/
   - ./sealed-secrets/
-  - ./flagger/
