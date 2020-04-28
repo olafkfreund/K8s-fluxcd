@@ -1,7 +1,6 @@
 bases:
   - ./common/
   - ./dashboard/
-  - ./ingress/
   - ./metallb/
   - ./metrics/
   - ./storage/
