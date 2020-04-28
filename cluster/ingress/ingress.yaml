@@ -169,4 +169,4 @@ spec:
         args:
         - /nginx-ingress-controller
         - --configmap=$(POD_NAMESPACE)/nginx-load-balancer-microk8s-conf
-        $EXTRA_ARGS
+        - --publish-status-address=127.0.0.1
