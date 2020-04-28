@@ -3,3 +3,4 @@ bases:
   - ./dashboard/
   - ./ingress/
   - ./metallb/
+  - ./metrics/
