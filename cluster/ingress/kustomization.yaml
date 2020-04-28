@@ -1,2 +1,2 @@
 bases:
-  - ingress.yaml
+  - ingress-flagger.yaml

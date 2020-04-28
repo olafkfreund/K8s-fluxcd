@@ -328,7 +328,7 @@ spec:
   minReadySeconds: 0
   template:
     metadata:
-      annotations: 
+      annotations:
         prometheus.io/port: 10254
         prometheus.io/scrape: true
       labels:
@@ -339,9 +339,9 @@ spec:
       dnsPolicy: ClusterFirst
       containers:
         - name: controller
-          image: quay.io/kubernetes-ingress-controller/nginx-ingress-controller:0.31.1
+          image: quay.io/kubernetes-ingress-controller/nginx-ingress-controller-arm64:0.31.1
           imagePullPolicy: IfNotPresent
-          lifecycle: 
+          lifecycle:
             preStop:
               exec:
                 command:
@@ -409,7 +409,7 @@ spec:
             - name: webhook-cert
               mountPath: /usr/local/certificates/
               readOnly: true
-          resources: 
+          resources:
             requests:
               cpu: 100m
               memory: 90Mi
@@ -593,7 +593,7 @@ spec:
     spec:
       containers:
         - name: create
-          image: jettech/kube-webhook-certgen:v1.0.0
+          image: jettech/kube-webhook-certgen:v1.2.0
           imagePullPolicy: IfNotPresent
           args:
             - create
@@ -635,8 +635,8 @@ spec:
     spec:
       containers:
         - name: patch
-          image: jettech/kube-webhook-certgen:v1.0.0
-          imagePullPolicy: 
+          image: jettech/kube-webhook-certgen:v1.2.0
+          imagePullPolicy:
           args:
             - patch
             - --webhook-name=nginx-ingress-ingress-nginx-admission
