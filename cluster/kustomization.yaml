@@ -1,5 +1,8 @@
 bases:
   - ./common/
+  - ./dashboard/
+  - ./ingress/
+  - ./metallb/
   - ./team1/
   - ./team2
   - ./flagger/

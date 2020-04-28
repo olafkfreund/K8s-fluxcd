@@ -13,7 +13,7 @@ metadata:
   name: speaker
   namespace: metallb-system
 spec:
-  allowPrivilegeEscalation: {{allow_escalation}}
+  allowPrivilegeEscalation: true
   allowedCapabilities:
   - NET_ADMIN
   - NET_RAW
@@ -223,7 +223,7 @@ spec:
             cpu: 100m
             memory: 100Mi
         securityContext:
-          allowPrivilegeEscalation: {{allow_escalation}}
+          allowPrivilegeEscalation: true
           capabilities:
             add:
             - NET_ADMIN
@@ -279,7 +279,7 @@ spec:
             cpu: 100m
             memory: 100Mi
         securityContext:
-          allowPrivilegeEscalation: {{allow_escalation}}
+          allowPrivilegeEscalation: true
           capabilities:
             drop:
             - all
@@ -303,4 +303,4 @@ data:
     - name: default
       protocol: layer2
       addresses:
-      - {{ip_range}}
+      - 192.168.68.210-192.168.68.220
