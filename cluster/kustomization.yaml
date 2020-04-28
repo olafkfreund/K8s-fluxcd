@@ -11,3 +11,4 @@ bases:
   - ./registry/
   - ./sealed-secret/
   - ./storage/
+  - ./extra/fluentd/
