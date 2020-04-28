@@ -4,8 +4,8 @@ bases:
   - ./team2
   - ./flagger/
   - ./gatekeeper/
-  - ./metrics/
-  - ./registry/
   - ./sealed-secret/
   - ./storage/
   - ./extra/fluentd/
+  - ./extra/prometheus/setup/
+  - ./extra/prometheus/
