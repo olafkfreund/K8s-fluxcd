@@ -1,14 +1,3 @@
 bases:
   - ./common/
   - ./dashboard/
-  - ./ingress/
-  - ./metallb/
-  - ./team1/
-  - ./team2
-  - ./flagger/
-  - ./gatekeeper/
-  - ./sealed-secret/
-  - ./storage/
-  - ./extra/fluentd/
-  - ./extra/prometheus/setup/
-  - ./extra/prometheus/
