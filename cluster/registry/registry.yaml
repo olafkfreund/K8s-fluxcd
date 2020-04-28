@@ -15,7 +15,7 @@ spec:
   volumeMode: Filesystem
   resources:
     requests:
-      storage: $DISKSIZE
+      storage: 500Gi
 ---
 apiVersion: apps/v1
 kind: Deployment
