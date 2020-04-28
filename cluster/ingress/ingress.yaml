@@ -144,7 +144,7 @@ spec:
       hostNetwork: true
       serviceAccountName: nginx-ingress-microk8s-serviceaccount
       containers:
-      - image: quay.io/kubernetes-ingress-controller/nginx-ingress-controller-$ARCH:$TAG
+      - image: quay.io/kubernetes-ingress-controller/nginx-ingress-controller-arm64:0.31.1
         name: nginx-ingress-microk8s
         livenessProbe:
           httpGet:
