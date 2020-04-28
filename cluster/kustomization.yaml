@@ -1,12 +1,9 @@
 bases:
   - ./common/
   - ./team1/
-  - ./dns/
-  - ./dashboard/
+  - ./team2
   - ./flagger/
   - ./gatekeeper/
-  - ./ingress/
-  - ./metallb/
   - ./metrics/
   - ./registry/
   - ./sealed-secret/

@@ -29,7 +29,7 @@ spec:
             medium: Memory
       containers:
         - name: flux
-          image: fluxcd/flux:1.15.0
+          image: raspbernetes/flux:latest
           imagePullPolicy: IfNotPresent
           ports:
             - name: http
