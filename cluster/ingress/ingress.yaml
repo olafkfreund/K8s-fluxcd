@@ -1,193 +1,452 @@
+---
 apiVersion: v1
 kind: Namespace
 metadata:
-  name: ingress
+  name: ingress-nginx
 ---
+# Source: nginx-ingress/templates/controller-serviceaccount.yaml
 apiVersion: v1
 kind: ServiceAccount
 metadata:
-  name: nginx-ingress-microk8s-serviceaccount
-  namespace: ingress
+  labels:
+    app: nginx-ingress
+    chart: nginx-ingress-1.36.3
+    heritage: Helm
+    release: nginx-ingress
+  name: nginx-ingress
+  namespace: ingress-nginx
 ---
+# Source: nginx-ingress/templates/default-backend-serviceaccount.yaml
+apiVersion: v1
+kind: ServiceAccount
+metadata:
+  labels:
+    app: nginx-ingress
+    chart: nginx-ingress-1.36.3
+    heritage: Helm
+    release: nginx-ingress
+  name: nginx-ingress-backend
+  namespace: ingress-nginx
+---
+# Source: nginx-ingress/templates/clusterrole.yaml
 apiVersion: rbac.authorization.k8s.io/v1
 kind: ClusterRole
 metadata:
-  name: nginx-ingress-microk8s-clusterrole
+  labels:
+    app: nginx-ingress
+    chart: nginx-ingress-1.36.3
+    heritage: Helm
+    release: nginx-ingress
+  name: nginx-ingress
+  namespace: ingress-nginx
 rules:
-- apiGroups:
-  - ""
-  resources:
-  - nodes
-  - services
-  verbs:
-  - get
-  - list
-  - watch
-- apiGroups:
-  - ""
-  resources:
-  - configmaps
-  - endpoints
-  - nodes
-  - pods
-  - secrets
-  verbs:
-  - list
-  - watch
-- apiGroups:
-  - ""
-  resources:
-  - events
-  verbs:
-  - create
-  - patch
-- apiGroups:
-  - extensions
-  - networking.k8s.io
-  resources:
-  - ingresses
-  verbs:
-  - get
-  - list
-  - watch
-- apiGroups:
-  - extensions
-  - networking.k8s.io
-  resources:
-  - ingresses/status
-  verbs:
-  - update
+  - apiGroups:
+      - ""
+    resources:
+      - configmaps
+      - endpoints
+      - nodes
+      - pods
+      - secrets
+    verbs:
+      - list
+      - watch
+  - apiGroups:
+      - ""
+    resources:
+      - nodes
+    verbs:
+      - get
+  - apiGroups:
+      - ""
+    resources:
+      - services
+    verbs:
+      - get
+      - list
+      - update
+      - watch
+  - apiGroups:
+      - extensions
+      - "networking.k8s.io" # k8s 1.14+
+    resources:
+      - ingresses
+    verbs:
+      - get
+      - list
+      - watch
+  - apiGroups:
+      - ""
+    resources:
+      - events
+    verbs:
+      - create
+      - patch
+  - apiGroups:
+      - extensions
+      - "networking.k8s.io" # k8s 1.14+
+    resources:
+      - ingresses/status
+    verbs:
+      - update
 ---
-apiVersion: rbac.authorization.k8s.io/v1
-kind: Role
-metadata:
-  name: nginx-ingress-microk8s-role
-  namespace: ingress
-rules:
-- apiGroups:
-  - ""
-  resources:
-  - configmaps
-  - endpoints
-  - pods
-  - secrets
-  verbs:
-  - get
-- apiGroups:
-  - ""
-  resources:
-  - configmaps
-  resourceNames:
-  - ingress-controller-leader-nginx
-  verbs:
-  - create
-  - update
-- apiGroups:
-  - ""
-  resources:
-  - configmaps
-  verbs:
-  - create
----
+# Source: nginx-ingress/templates/clusterrolebinding.yaml
 apiVersion: rbac.authorization.k8s.io/v1
 kind: ClusterRoleBinding
 metadata:
-  name: nginx-ingress-microk8s
+  labels:
+    app: nginx-ingress
+    chart: nginx-ingress-1.36.3
+    heritage: Helm
+    release: nginx-ingress
+  name: nginx-ingress
+  namespace: ingress-nginx
 roleRef:
   apiGroup: rbac.authorization.k8s.io
   kind: ClusterRole
-  name: nginx-ingress-microk8s-clusterrole
+  name: nginx-ingress
 subjects:
-- kind: ServiceAccount
-  name: nginx-ingress-microk8s-serviceaccount
-  namespace: ingress
+  - kind: ServiceAccount
+    name: nginx-ingress
+    namespace: ingress-nginx
 ---
-# Source: ingress-nginx/templates/controller-service-metrics.yaml
+# Source: nginx-ingress/templates/controller-role.yaml
+apiVersion: rbac.authorization.k8s.io/v1
+kind: Role
+metadata:
+  labels:
+    app: nginx-ingress
+    chart: nginx-ingress-1.36.3
+    heritage: Helm
+    release: nginx-ingress
+  name: nginx-ingress
+  namespace: ingress-nginx
+rules:
+  - apiGroups:
+      - ""
+    resources:
+      - namespaces
+    verbs:
+      - get
+  - apiGroups:
+      - ""
+    resources:
+      - configmaps
+      - pods
+      - secrets
+      - endpoints
+    verbs:
+      - get
+      - list
+      - watch
+  - apiGroups:
+      - ""
+    resources:
+      - services
+    verbs:
+      - get
+      - list
+      - update
+      - watch
+  - apiGroups:
+      - extensions
+      - "networking.k8s.io" # k8s 1.14+
+    resources:
+      - ingresses
+    verbs:
+      - get
+      - list
+      - watch
+  - apiGroups:
+      - extensions
+      - "networking.k8s.io" # k8s 1.14+
+    resources:
+      - ingresses/status
+    verbs:
+      - update
+  - apiGroups:
+      - ""
+    resources:
+      - configmaps
+    resourceNames:
+      - ingress-controller-leader-nginx
+    verbs:
+      - get
+      - update
+  - apiGroups:
+      - ""
+    resources:
+      - configmaps
+    verbs:
+      - create
+  - apiGroups:
+      - ""
+    resources:
+      - endpoints
+    verbs:
+      - create
+      - get
+      - update
+  - apiGroups:
+      - ""
+    resources:
+      - events
+    verbs:
+      - create
+      - patch
+---
+# Source: nginx-ingress/templates/controller-rolebinding.yaml
+apiVersion: rbac.authorization.k8s.io/v1
+kind: RoleBinding
+metadata:
+  labels:
+    app: nginx-ingress
+    chart: nginx-ingress-1.36.3
+    heritage: Helm
+    release: nginx-ingress
+  name: nginx-ingress
+  namespace: ingress-nginx
+roleRef:
+  apiGroup: rbac.authorization.k8s.io
+  kind: Role
+  name: nginx-ingress
+subjects:
+  - kind: ServiceAccount
+    name: nginx-ingress
+    namespace: ingress-nginx
+---
+# Source: nginx-ingress/templates/controller-metrics-service.yaml
 apiVersion: v1
 kind: Service
 metadata:
   labels:
-    helm.sh/chart: ingress-nginx-2.0.1
-  name: nginx-ingress-microk8s-controller-metrics
+    app: nginx-ingress
+    chart: nginx-ingress-1.36.3
+    component: "controller"
+    heritage: Helm
+    release: nginx-ingress
+  name: nginx-ingress-controller-metrics
+  namespace: ingress-nginx
 spec:
-  type: ClusterIP
   ports:
     - name: metrics
       port: 9913
       targetPort: metrics
   selector:
-    app.kubernetes.io/name: ingress-nginx
-    app.kubernetes.io/instance: nginx-ingress
+    app: nginx-ingress
+    release: nginx-ingress
     app.kubernetes.io/component: controller
+  type: "ClusterIP"
 ---
-apiVersion: rbac.authorization.k8s.io/v1
-kind: RoleBinding
-metadata:
-  name: nginx-ingress-microk8s
-  namespace: ingress
-roleRef:
-  apiGroup: rbac.authorization.k8s.io
-  kind: Role
-  name: nginx-ingress-microk8s-role
-subjects:
-- kind: ServiceAccount
-  name: nginx-ingress-microk8s-serviceaccount
----
+# Source: nginx-ingress/templates/controller-service.yaml
 apiVersion: v1
-kind: ConfigMap
+kind: Service
 metadata:
-  name: nginx-load-balancer-microk8s-conf
-  namespace: ingress
----
-apiVersion: apps/v1
-kind: DaemonSet
-metadata:
-  name: nginx-ingress-microk8s-controller
-  namespace: ingress
   labels:
-    microk8s-application: nginx-ingress-microk8s
+    app: nginx-ingress
+    chart: nginx-ingress-1.36.3
+    component: "controller"
+    heritage: Helm
+    release: nginx-ingress
+  name: nginx-ingress-controller
+  namespace: ingress-nginx
+spec:
+  ports:
+    - name: http
+      port: 80
+      protocol: TCP
+      targetPort: http
+    - name: https
+      port: 443
+      protocol: TCP
+      targetPort: https
+  selector:
+    app: nginx-ingress
+    release: nginx-ingress
+    app.kubernetes.io/component: controller
+  type: "LoadBalancer"
+---
+# Source: nginx-ingress/templates/default-backend-service.yaml
+apiVersion: v1
+kind: Service
+metadata:
+  labels:
+    app: nginx-ingress
+    chart: nginx-ingress-1.36.3
+    component: "default-backend"
+    heritage: Helm
+    release: nginx-ingress
+  name: nginx-ingress-default-backend
+  namespace: ingress-nginx
+spec:
+  ports:
+    - name: http
+      port: 80
+      protocol: TCP
+      targetPort: http
+  selector:
+    app: nginx-ingress
+    release: nginx-ingress
+    app.kubernetes.io/component: default-backend
+  type: "ClusterIP"
+---
+# Source: nginx-ingress/templates/controller-deployment.yaml
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  labels:
+    app: nginx-ingress
+    chart: nginx-ingress-1.36.3
+    heritage: Helm
+    release: nginx-ingress
+    app.kubernetes.io/component: controller
+  name: nginx-ingress-controller
+  namespace: ingress-nginx
+  annotations:
+    {}
 spec:
   selector:
     matchLabels:
-      name: nginx-ingress-microk8s
+      app: nginx-ingress
+      release: nginx-ingress
+  replicas: 1
+  revisionHistoryLimit: 10
+  strategy:
+    {}
+  minReadySeconds: 0
   template:
     metadata:
       annotations:
-        prometheus.io/port: 10254
-        prometheus.io/scrape: true
+        prometheus.io/port: "10254"
+        prometheus.io/scrape: "true"
       labels:
-        name: nginx-ingress-microk8s
+        app: nginx-ingress
+        release: nginx-ingress
+        component: "controller"
+        app.kubernetes.io/component: controller
     spec:
-      terminationGracePeriodSeconds: 60
-      # hostPort doesn't work with CNI, so we have to use hostNetwork instead
-      # see https://github.com/kubernetes/kubernetes/issues/23920
-      dnsPolicy: ClusterFirstWithHostNet
-      hostNetwork: true
-      serviceAccountName: nginx-ingress-microk8s-serviceaccount
+      dnsPolicy: ClusterFirst
       containers:
-      - image: quay.io/kubernetes-ingress-controller/nginx-ingress-controller-arm64:0.31.1
-        name: nginx-ingress-microk8s
-        livenessProbe:
-          httpGet:
-            path: /healthz
-            port: 10254
-            scheme: HTTP
-          initialDelaySeconds: 30
-          timeoutSeconds: 5
-        # use downward API
-        env:
-          - name: POD_NAME
-            valueFrom:
-              fieldRef:
-                fieldPath: metadata.name
-          - name: POD_NAMESPACE
-            valueFrom:
-              fieldRef:
-                fieldPath: metadata.namespace
-        ports:
-        - containerPort: 80
-        - containerPort: 443
-        args:
-        - /nginx-ingress-controller
-        - --configmap=$(POD_NAMESPACE)/nginx-load-balancer-microk8s-conf
-        - --publish-status-address=127.0.0.1
+        - name: nginx-ingress-controller
+          image: "quay.io/kubernetes-ingress-controller/nginx-ingress-controller-arm64:0.30.0"
+          imagePullPolicy: "IfNotPresent"
+          args:
+            - /nginx-ingress-controller
+            - --default-backend-service=ingress-nginx/nginx-ingress-default-backend
+            - --election-id=ingress-controller-leader
+            - --ingress-class=nginx
+            - --configmap=ingress-nginx/nginx-ingress-controller
+          securityContext:
+            capabilities:
+                drop:
+                - ALL
+                add:
+                - NET_BIND_SERVICE
+            runAsUser: 101
+            allowPrivilegeEscalation: true
+          env:
+            - name: POD_NAME
+              valueFrom:
+                fieldRef:
+                  fieldPath: metadata.name
+            - name: POD_NAMESPACE
+              valueFrom:
+                fieldRef:
+                  fieldPath: metadata.namespace
+          livenessProbe:
+            httpGet:
+              path: /healthz
+              port: 10254
+              scheme: HTTP
+            initialDelaySeconds: 10
+            periodSeconds: 10
+            timeoutSeconds: 1
+            successThreshold: 1
+            failureThreshold: 3
+          ports:
+            - name: http
+              containerPort: 80
+              protocol: TCP
+            - name: https
+              containerPort: 443
+              protocol: TCP
+            - name: metrics
+              containerPort: 10254
+              protocol: TCP
+          readinessProbe:
+            httpGet:
+              path: /healthz
+              port: 10254
+              scheme: HTTP
+            initialDelaySeconds: 10
+            periodSeconds: 10
+            timeoutSeconds: 1
+            successThreshold: 1
+            failureThreshold: 3
+          resources:
+            {}
+      hostNetwork: false
+      serviceAccountName: nginx-ingress
+      terminationGracePeriodSeconds: 60
+---
+# Source: nginx-ingress/templates/default-backend-deployment.yaml
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  labels:
+    app: nginx-ingress
+    chart: nginx-ingress-1.36.3
+    heritage: Helm
+    release: nginx-ingress
+    app.kubernetes.io/component: default-backend
+  name: nginx-ingress-default-backend
+  namespace: ingress-nginx
+spec:
+  selector:
+    matchLabels:
+      app: nginx-ingress
+      release: nginx-ingress
+  replicas: 1
+  revisionHistoryLimit: 10
+  template:
+    metadata:
+      labels:
+        app: nginx-ingress
+        release: nginx-ingress
+        app.kubernetes.io/component: default-backend
+    spec:
+      containers:
+        - name: nginx-ingress-default-backend
+          image: "misternipples/defaultbackend-arm64:latest"
+          imagePullPolicy: "IfNotPresent"
+          args:
+          securityContext:
+            runAsUser: 65534
+          livenessProbe:
+            httpGet:
+              path: /healthz
+              port: 8080
+              scheme: HTTP
+            initialDelaySeconds: 30
+            periodSeconds: 10
+            timeoutSeconds: 5
+            successThreshold: 1
+            failureThreshold: 3
+          readinessProbe:
+            httpGet:
+              path: /healthz
+              port: 8080
+              scheme: HTTP
+            initialDelaySeconds: 0
+            periodSeconds: 5
+            timeoutSeconds: 5
+            successThreshold: 1
+            failureThreshold: 6
+          ports:
+            - name: http
+              containerPort: 8080
+              protocol: TCP
+          resources:
+            {}
+      serviceAccountName: nginx-ingress-backend
+      terminationGracePeriodSeconds: 60
