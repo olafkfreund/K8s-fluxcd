@@ -102,6 +102,24 @@ subjects:
   name: nginx-ingress-microk8s-serviceaccount
   namespace: ingress
 ---
+# Source: ingress-nginx/templates/controller-service-metrics.yaml
+apiVersion: v1
+kind: Service
+metadata:
+  labels:
+    helm.sh/chart: ingress-nginx-2.0.1
+  name: nginx-ingress-microk8s-controller-metrics
+spec:
+  type: ClusterIP
+  ports:
+    - name: metrics
+      port: 9913
+      targetPort: metrics
+  selector:
+    app.kubernetes.io/name: ingress-nginx
+    app.kubernetes.io/instance: nginx-ingress
+    app.kubernetes.io/component: controller
+---
 apiVersion: rbac.authorization.k8s.io/v1
 kind: RoleBinding
 metadata:
@@ -134,6 +152,9 @@ spec:
       name: nginx-ingress-microk8s
   template:
     metadata:
+      annotations:
+        prometheus.io/port: 10254
+        prometheus.io/scrape: true
       labels:
         name: nginx-ingress-microk8s
     spec:
