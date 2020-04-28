@@ -19,23 +19,23 @@ spec:
       serviceAccountName: microk8s-hostpath
       containers:
         - name: hostpath-provisioner
-          image: cdkbot/hostpath-provisioner-arm64:1.0.0
+          image: cdkbot/hostpath-provisioner-arm64:latest
           env:
             - name: NODE_NAME
               valueFrom:
                 fieldRef:
                   fieldPath: spec.nodeName
             - name: PV_DIR
-              value: $SNAP_COMMON/default-storage
-#            - name: PV_RECLAIM_POLICY
-#              value: Retain
+              value: /mnt/disk01
+            - name: PV_RECLAIM_POLICY
+              value: Retain
           volumeMounts:
             - name: pv-volume
-              mountPath: $SNAP_COMMON/default-storage
+              mountPath: /mnt/disk01
       volumes:
         - name: pv-volume
           hostPath:
-            path: $SNAP_COMMON/default-storage
+            path: /mnt/disk01
 ---
 kind: StorageClass
 apiVersion: storage.k8s.io/v1
