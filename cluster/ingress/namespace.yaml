@@ -3,4 +3,4 @@ kind: Namespace
 metadata:
   labels:
     app: metallb
-  name: nginx-ingress
+  name: kube-system
