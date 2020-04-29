@@ -1,8 +1,8 @@
 bases:
   - ./common/
   - ./dashboard/
-  - ./ingress/
-  - ./metallb/
+#  - ./ingress/
+#  - ./metallb/
 #  - ./metrics/
 #  - ./storage/
 #  - ./registry/
