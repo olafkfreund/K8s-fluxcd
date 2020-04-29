@@ -7,6 +7,8 @@ spec:
     spec:
       containers:
         - name: flagger
+          image: olaffreund/flagger-arm64:arm
+          imagePullPolicy: IfNotPresent
           args:
             - -mesh-provider=kubernetes
             - -metrics-server=http://flagger-prometheus:9090
