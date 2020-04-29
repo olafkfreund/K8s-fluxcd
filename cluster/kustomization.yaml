@@ -4,8 +4,8 @@ bases:
 #  - ./ingress/
 #  - ./metallb/
 #  - ./metrics/
-#  - ./storage/
-#  - ./registry/
+  - ./storage/
+  - ./registry/
 #  - ./sealed-secrets/
 #  - ./flagger/
   - ./team1/
