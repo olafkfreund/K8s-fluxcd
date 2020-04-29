@@ -67,11 +67,11 @@ data:
   config: |
     address-pools:
     - addresses:
-      - 192.168.68.211-192.168.68.212
+      - 192.168.68.212-192.168.68.220
       name: default
       protocol: layer2
     - addresses:
-      - 192.168.68.213-192.168.68.214
+      - 192.168.68.220-192.168.68.230
       name: default
       protocol: layer2
 ---

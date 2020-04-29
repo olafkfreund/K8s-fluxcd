@@ -8,5 +8,5 @@ bases:
   - ./registry/
 #  - ./sealed-secrets/
 #  - ./flagger/
-#  - ./team1/
+  - ./team1/
 #  - ./team2/
