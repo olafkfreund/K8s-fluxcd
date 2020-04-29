@@ -1,12 +1,12 @@
 bases:
 #  - ./common/
 #  - ./dashboard/
-  - ./ingress/
+#  - ./ingress/
 #  - ./metallb/
 #  - ./metrics/
   - ./storage/
   - ./registry/
 #  - ./sealed-secrets/
 #  - ./flagger/
-# - ./team1/
+#  - ./team1/
 #  - ./team2/
