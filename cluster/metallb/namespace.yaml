@@ -3,4 +3,4 @@ kind: Namespace
 metadata:
   labels:
     app: metallb
-  name: metallb-system
+  name: kube-system
