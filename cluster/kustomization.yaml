@@ -3,11 +3,10 @@ bases:
   - ./dashboard/
   - ./ingress/
   - ./metallb/
-  - ./metrics/
-  - ./storage/
-  - ./registry/
-  - ./sealed-secrets/
-  - ./flagger/
+#  - ./metrics/
+#  - ./storage/
+#  - ./registry/
+#  - ./sealed-secrets/
+#  - ./flagger/
   - ./team1/
   - ./team2/
-  - ./gatekeeper/
