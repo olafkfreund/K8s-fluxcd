@@ -7,6 +7,6 @@ bases:
   - ./storage/
   - ./registry/
 #  - ./sealed-secrets/
-#  - ./flagger/
+  - ./flagger/
   - ./team1/
   - ./team2/
