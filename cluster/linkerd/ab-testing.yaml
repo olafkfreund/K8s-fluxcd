@@ -1,0 +1,59 @@
+apiVersion: flagger.app/v1beta1
+kind: Canary
+metadata:
+  name: podinfo
+  namespace: test
+spec:
+  # ingress reference
+  provider: nginx
+  ingressRef:
+    apiVersion: extensions/v1beta1
+    kind: Ingress
+    name: podinfo
+  targetRef:
+    apiVersion: apps/v1
+    kind: Deployment
+    name: podinfo
+  autoscalerRef:
+    apiVersion: autoscaling/v2beta1
+    kind: HorizontalPodAutoscaler
+    name: podinfo
+  service:
+    # container port
+    port: 9898
+  analysis:
+    interval: 1m
+    threshold: 10
+    iterations: 10
+    match:
+      # curl -H 'X-Canary: always' http://app.example.com
+      - headers:
+          x-canary:
+            exact: "always"
+      # curl -b 'canary=always' http://app.example.com
+      - headers:
+          cookie:
+            exact: "canary"
+    # Linkerd Prometheus checks
+    metrics:
+    - name: request-success-rate
+      thresholdRange:
+        min: 99
+      interval: 1m
+    - name: request-duration
+      thresholdRange:
+        max: 500
+      interval: 30s
+    webhooks:
+      - name: acceptance-test
+        type: pre-rollout
+        url: http://flagger-loadtester.test/
+        timeout: 30s
+        metadata:
+          type: bash
+          cmd: "curl -sd 'test' http://podinfo-canary:9898/token | grep token"
+      - name: load-test
+        type: rollout
+        url: http://flagger-loadtester.test/
+        metadata:
+          cmd: "hey -z 2m -q 10 -c 2 -H 'Cookie: canary=always' http://app.example.com"
