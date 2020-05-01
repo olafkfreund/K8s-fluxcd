@@ -2,9 +2,9 @@
 
 [![test](https://github.com/fluxcd/multi-tenancy/workflows/test/badge.svg)](https://github.com/fluxcd/multi-tenancy/blob/master/.github/workflows/test.yml)
 
-This repository serves as a starting point for a multi-tenant cluster managed with Git, Flux and Kustomize.
+This repository serves as a demo for a multi-tenant cluster managed with Git, Flux,Kustomize and Linkerd for ARM64
 
-I'm assuming that a multi-tenant cluster is shared by multiple teams. The cluster wide operations are performed by
+I'm assuming that a multi-tenant cluster is shared by 2 teams. The cluster wide operations are performed by
 the cluster administrators while the namespace scoped operations are performed by various teams each with its own Git repository.
 That means a team member, that's not a cluster admin, can't create namespaces,
 custom resources definitions or change something in another team namespace.
@@ -15,8 +15,9 @@ custom resources definitions or change something in another team namespace.
 
 First you'll have to create two git repositories:
 
-* a clone of [fluxcd-multi-tenancy](https://github.com/fluxcd/multi-tenancy) repository for the cluster admins, I will refer to it as `org/dev-cluster`
-* a clone of [fluxcd-multi-tenancy-team1](https://github.com/fluxcd/multi-tenancy-team1) repository for the dev team1, I will refer to it as `org/dev-team1`
+* a clone of [fluxcd-multi-tenancy](https://github.com/olafkfreund/K8s-fluxcd) repository for the cluster admins, I will refer to it as `org/dev-cluster`
+* a clone of [fluxcd-multi-tenancy-team1](https://github.com/olafkfreund/K8s-team1) repository for the dev team1, I will refer to it as `org/dev-team1`
+* a clone of [fluxcd-multi-tenancy-team1](https://github.com/olafkfreund/K8s-team2) repository for the dev team2, I will refer to it as `org/dev-team2`
 
 | Team      | Namespace   | Git Repository        | Flux RBAC
 | --------- | ----------- | --------------------- | ---------------
@@ -59,7 +60,7 @@ commandUpdated:
     - command: kustomize build .
 ```
 
-Development team1 repository structure:
+Development team1 and team2 repository structure:
 
 ```
 ├── .flux.yaml
@@ -71,9 +72,15 @@ Development team1 repository structure:
     │   ├── kustomization.yaml
     │   └── service.yaml
     └── backend
-        ├── deployment.yaml
-        ├── kustomization.yaml
-        └── service.yaml
+    |   ├── deployment.yaml
+    |   ├── kustomization.yaml
+    |   └── service.yaml
+    |---standalone
+        |--deployment.yaml
+        |--hpa.yaml
+        |--ingress.yaml
+        |--kustomization.yaml
+        |--service.yaml
 ```
 
 The `workloads` folder contains the desired state of the `team1` namespace and the `flux-patch.yaml` contains the
@@ -96,7 +103,7 @@ In the dev-cluster repo, change the git URL to point to your fork:
 ```bash
 vim ./install/flux-patch.yaml
 
---git-url=git@github.com:org/dev-cluster
+--git-url=git@github.com:org/olafkfreund/K8s-fluxcd
 ```
 
 Install the cluster wide Flux with kubectl kustomize:
@@ -115,16 +122,21 @@ Add the public key to the `github.com:org/dev-cluster` repository deploy keys wi
 
 The cluster wide Flux will do the following:
 * creates the cluster objects from `cluster/common` directory (CRDs, cluster roles, etc)
-* creates the `team1` namespace and deploys a Flux instance with restricted access to that namespace
+* creates the `team1` and `team2` namespace and deploys a Flux instance with restricted access to that namespace
 
 ### Install a Flux per team
 
-Change the dev team1 git URL:
+Change the dev team1 and team2 git URL:
 
 ```bash
 vim ./cluster/team1/flux-patch.yaml
 
---git-url=git@github.com:org/dev-team1
+--git-url=git@github.com:org/olafkfreund/K8s-team1
+```
+```bash
+vim ./cluster/team1/flux-patch.yaml
+
+--git-url=git@github.com:org/olafkfreund/K8s-team2
 ```
 
 When you commit your changes, the system Flux will configure the team1's Flux to sync with `org/dev-team1` repository.
@@ -134,14 +146,23 @@ Get the public SSH key for team1 with:
 ```bash
 fluxctl --k8s-fwd-ns=team1 identity
 ```
+Get the public SSH key for team2 with:
 
-Add the public key to the `github.com:org/dev-team1` deploy keys with write access. The team1's Flux
+```bash
+fluxctl --k8s-fwd-ns=team2 identity
+```
+
+Add the public key to the `github.com:org/olafkfreund/K8s-team1` deploy keys with write access. The team1's Flux
 will apply the manifests from `org/dev-team1` repository only in the `team1` namespace, this is enforced with RBAC and role bindings.
 
-If team1 needs to deploy a controller that depends on a CRD or a cluster role, they'll
+Add the public key to the `github.com:org/olafkfreund/K8s-team2` deploy keys with write access. The team1's Flux
+will apply the manifests from `org/dev-team2` repository only in the `team2` namespace, this is enforced with RBAC and role bindings.
+
+If team1 or team2 needs to deploy a controller that depends on a CRD or a cluster role, they'll
 have to open a PR in the `org/dev-cluster`repository and add those cluster wide objects in the `cluster/common` directory.
 
 The team1's Flux instance can be customised with different options than the system Flux using the `cluster/team1/flux-patch.yaml`.
+The same applies for team2.
 
 ```yaml
 apiVersion: apps/v1
@@ -180,6 +201,7 @@ bases:
   - ./flagger/
   - ./common/
   - ./team1/
+  - ./team2/
 ```
 
 Commit the changes to git and wait for system Flux to install Flagger and Prometheus:
@@ -193,7 +215,7 @@ flagger-64c6945d5b-4zgvh              1/1     Running
 flagger-prometheus-6f6b558b7c-22kw5   1/1     Running
 ```
 
-A team member can now push canary objects to `org/dev-team1` repository and Flagger will automate the deployment process.
+A team member can now push canary objects to `org/dev-team1`  or `org/dev-team1` repository and Flagger will automate the deployment process.
 
 Flagger can notify your teams when a canary deployment has been initialised,
 when a new revision has been detected and if the canary analysis failed or succeeded.
@@ -225,7 +247,7 @@ a cluster admin can define a set of conditions that a pod must run with in order
 
 For example you can forbid a team from creating privileged containers or use the host network.
 
-Edit the team1 pod security policy `cluster/team1/psp.yaml`:
+Edit the each team's pod security policy `cluster/team1/psp.yaml`:
 
 ```yaml
 apiVersion: policy/v1beta1
@@ -257,7 +279,7 @@ spec:
 Set privileged, hostIPC, hostNetwork and hostPID to false and commit the change to git. From this moment on, team1 will
 not be able to run containers with an elevated security context under the default service account.
 
-If a team member adds a privileged container definition in the `org/dev-team1` repository, Kubernetes will deny it:
+If a team member adds a privileged container definition in the `org/dev-team1` or the `org/dev-team1` repository, Kubernetes will deny it:
 
 ```bash
 kubectl -n team1 describe replicasets podinfo-5d7d9fc9d5
@@ -310,7 +332,7 @@ fluxctl --k8s-fwd-ns=flux-system sync
 watch kubectl -n gatekeeper-system get po
 ```
 
-If a team member adds a deployment without CPU or memory resources in the `org/dev-team1` repository, Gatekeeper will deny it:
+If a team member adds a deployment without CPU or memory resources in the `org/dev-team1` or the `org/dev-team1` repository, Gatekeeper will deny it:
 
 ```bash
 kubectl -n team1 logs deploy/flux
@@ -319,42 +341,6 @@ admission webhook "validation.gatekeeper.sh" denied the request:
 [denied by containerresources] container <podinfo> has no memory requests
 [denied by containerresources] container <sidecar> has no memory limits
 ```
-
-### Add a new team/namespace/repository
-
-If you want to add another team to the cluster, first create a git repository as `github.com:org/dev-team2`.
-
-Run the create team script:
-
-```bash
-./scripts/create-team.sh team2
-
-team2 created at cluster/team2/
-team2 added to cluster/kustomization.yaml
-```
-
-Change the git URL in `cluster/team2` dir:
-
-```bash
-vim ./cluster/team2/flux-patch.yaml
-
---git-url=git@github.com:org/dev-team2
-```
-
-Push the changes to the master branch of `org/dev-cluster` and sync with the cluster:
-
-```bash
-fluxctl --k8s-fwd-ns=flux-system sync
-```
-
-Get the team2 public SSH key with:
-
-```bash
-fluxctl --k8s-fwd-ns=team2 identity
-```
-
-Add the public key to the `github.com:org/dev-team2` repository deploy keys with write access. The team2's Flux
-will apply the manifests from `org/dev-team2` repository only in the `team2` namespace.
 
 ### Isolate tenants
 
