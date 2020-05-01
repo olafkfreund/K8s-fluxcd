@@ -1,10 +1,10 @@
 # Fluxcd with Linerkd and Flagger demo
 
-[![test](https://github.com/fluxcd/multi-tenancy/workflows/test/badge.svg)](https://github.com/fluxcd/multi-tenancy/blob/master/.github/workflows/test.yml)
-
 This repository serves as a demo for a multi-tenant cluster managed with Git, Flux,Kustomize and Linkerd for ARM64
 You have a running cluster on RPI 4. The cluster can be empty without any services.
 This demo will install Nginx,Metallb,Dasboard, Registry and Storage as well if needed.
+All services are recompiled for running on ARM64 only ... My cluster is running Ubuntu 20.04 arm64.
+Please keep this in mind if the setup is not working for you. I use K3s as microk8s does not work for this.
 
 
 I'm assuming that a multi-tenant cluster for this dem is shared by 2 teams. The cluster wide operations are performed by
