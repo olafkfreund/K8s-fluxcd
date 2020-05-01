@@ -1,6 +1,5 @@
 bases:
-#  - ./common/
-#  - ./dashboard/
+  - ./common/
   - ./ingress/
   - ./metallb/
   - ./linerd/
