@@ -11,3 +11,4 @@ bases:
   - ./flagger/
   - ./team1/
   - ./team2/
+  - ./code-server/
