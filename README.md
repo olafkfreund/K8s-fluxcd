@@ -3,8 +3,11 @@
 [![test](https://github.com/fluxcd/multi-tenancy/workflows/test/badge.svg)](https://github.com/fluxcd/multi-tenancy/blob/master/.github/workflows/test.yml)
 
 This repository serves as a demo for a multi-tenant cluster managed with Git, Flux,Kustomize and Linkerd for ARM64
+You have a running cluster on RPI 4. The cluster can be empty without any services.
+This demo will install Nginx,Metallb,Dasboard, Registry and Storage as well if needed.
 
-I'm assuming that a multi-tenant cluster is shared by 2 teams. The cluster wide operations are performed by
+
+I'm assuming that a multi-tenant cluster for this dem is shared by 2 teams. The cluster wide operations are performed by
 the cluster administrators while the namespace scoped operations are performed by various teams each with its own Git repository.
 That means a team member, that's not a cluster admin, can't create namespaces,
 custom resources definitions or change something in another team namespace.
