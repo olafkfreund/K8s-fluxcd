@@ -20,7 +20,7 @@ First you'll have to create two git repositories:
 
 * a clone of [fluxcd-multi-tenancy](https://github.com/olafkfreund/K8s-fluxcd) repository for the cluster admins, I will refer to it as `org/dev-cluster`
 * a clone of [fluxcd-multi-tenancy-team1](https://github.com/olafkfreund/K8s-team1) repository for the dev team1, I will refer to it as `org/dev-team1`
-* a clone of [fluxcd-multi-tenancy-team1](https://github.com/olafkfreund/K8s-team2) repository for the dev team2, I will refer to it as `org/dev-team2`
+* a clone of [fluxcd-multi-tenancy-team2](https://github.com/olafkfreund/K8s-team2) repository for the dev team2, I will refer to it as `org/dev-team2`
 
 | Team      | Namespace   | Git Repository        | Flux RBAC
 | --------- | ----------- | --------------------- | ---------------
@@ -36,10 +36,24 @@ Cluster admin repository structure:
 │   ├── flux
 │   └── memcached
 ├── cluster
+|   ├── flagger
+|   ├── gatekeeper
+|   ├── ingress
+|   ├── metallb
+|   ├── storage
+|   ├── dasboard
+|   ├── sealed-secret
 │   ├── common
 │   │   ├── crds.yaml
 │   │   └── kustomization.yaml
 │   └── team1
+│   |   ├── flux-patch.yaml
+│   |   ├── kubeconfig.yaml
+│   |   ├── kustomization.yaml
+│   |   ├── namespace.yaml
+│   |   ├── psp.yaml
+│   |   └── rbac.yaml
+|   └───team2
 │       ├── flux-patch.yaml
 │       ├── kubeconfig.yaml
 │       ├── kustomization.yaml
