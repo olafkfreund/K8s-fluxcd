@@ -1,4 +1,4 @@
-# fluxcd-multi-tenancy
+# Fluxcd with Linerkd and Flagger demo
 
 [![test](https://github.com/fluxcd/multi-tenancy/workflows/test/badge.svg)](https://github.com/fluxcd/multi-tenancy/blob/master/.github/workflows/test.yml)
 
