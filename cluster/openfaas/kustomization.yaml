@@ -1,0 +1,20 @@
+namespace: openfaas
+bases:
+  - namespaces.yaml
+  - alertmanager-cfg.yml
+  - alertmanager-dep.yml
+  - alertmanager-svc.yml
+  - basic-auth-plugin-dep.yml
+  - basic-auth-plugin-svc.yml
+  - controller-rbac.yml
+  - faas-idler-dep.yml
+  - gateway-dep.yml
+  - gateway-external-svc.yml
+  - nats-dep.yml
+  - nats-svc.yml
+  - prometheus-cfg.yml
+  - prometheus-dep.yml
+  - prometheus-rbac.yml
+  - prometheus-svc.yml
+  - queueworker-dep.yml
+  - rbac.yml
