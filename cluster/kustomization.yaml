@@ -3,11 +3,12 @@ bases:
   - ./ingress/
   - ./metallb/
   - ./linkerd/
-#  - ./metrics/
-#  - ./storage/
-#  - ./registry/
+  - ./metrics/
+  - ./storage/
+  - ./registry/
 #  - ./sealed-secrets/
   - ./flagger/
   - ./team1/
   - ./team2/
   - ./code-server/
+  - ./openfaas/
