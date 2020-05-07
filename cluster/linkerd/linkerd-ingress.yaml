@@ -24,7 +24,7 @@ metadata:
     nginx.ingress.kubernetes.io/auth-realm: "Authentication Required"
 spec:
   rules:
-  - host: linkerd.192.168.68.212.nip.io
+  - host: linkerd.home.freundcloud.org.uk
     http:
       paths:
       - backend:
