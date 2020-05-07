@@ -2,7 +2,7 @@ bases:
   - ./common/
   - ./ingress/
   - ./metallb/
-  - ./linerd/
+  - ./linkerd/
 #  - ./metrics/
 #  - ./storage/
 #  - ./registry/
