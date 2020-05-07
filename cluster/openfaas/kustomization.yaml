@@ -1,5 +1,5 @@
 namespace: openfaas
-bases:
+resources:
   - namespaces.yaml
   - alertmanager-cfg.yml
   - alertmanager-dep.yml
