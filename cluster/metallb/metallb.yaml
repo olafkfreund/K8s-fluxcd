@@ -223,7 +223,7 @@ spec:
       hostNetwork: true
       containers:
       - name: speaker
-        image: metallb/speaker:v0.8.1
+        image: metallb/speaker:main
         imagePullPolicy: IfNotPresent
         args:
         - --port=7472
@@ -291,7 +291,7 @@ spec:
         "beta.kubernetes.io/os": linux
       containers:
       - name: controller
-        image: metallb/controller:v0.8.1
+        image: metallb/controller:main
         imagePullPolicy: IfNotPresent
         args:
         - --port=7472

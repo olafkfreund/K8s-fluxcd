@@ -1,5 +1,7 @@
 bases:
   - ./common/
+  - ./team1/
+  - ./team2/
   - ./ingress/
   - ./metallb/
   - ./linkerd/
@@ -8,7 +10,5 @@ bases:
   - ./registry/
 #  - ./sealed-secrets/
   - ./flagger/
-  - ./team1/
-  - ./team2/
   - ./code-server/
   - ./openfaas/
