@@ -1,2 +1,3 @@
-bases:
-  - storage.yaml
+resources:
+  - nfs-pv.yaml
+  - nfs-pvc.yaml
