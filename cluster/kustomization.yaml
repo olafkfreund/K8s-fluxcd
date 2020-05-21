@@ -10,5 +10,4 @@ bases:
   - ./registry/
 #  - ./sealed-secrets/
   - ./flagger/
-  - ./code-server/
   - ./openfaas/

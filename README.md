@@ -368,16 +368,3 @@ In order to harden the tenant isolation, a cluster admin should consider using:
 * network policies (restrict cross namespace traffic)
 * pod security policies (prevent running privileged containers or host network and filesystem usage)
 * Open Policy Agent admission controller (enforce custom policies on Kubernetes objects)
-
-### Getting Help
-
-If you have any questions about Flux and GitOps:
-
-
-- Invite yourself to the <a href="https://slack.cncf.io" target="_blank">CNCF community</a>
-  slack and ask a question on the [#flux](https://cloud-native.slack.com/messages/flux/)
-  channel.
-- To be part of the conversation about Flux's development, join the
-  [flux-dev mailing list](https://lists.cncf.io/g/cncf-flux-dev).
-- Join the [Weave User Group](https://www.meetup.com/pro/Weave/) and get invited to online talks,
-  hands-on training and meetups in your area.
