@@ -5,7 +5,6 @@ bases:
   - ./ingress/
   - ./metallb/
 #  - ./linkerd/
-  - ./metrics/
   - ./storage/
   - ./registry/
 #  - ./sealed-secrets/
