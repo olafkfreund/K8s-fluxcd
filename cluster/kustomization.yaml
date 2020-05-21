@@ -1,12 +1,11 @@
 bases:
   - ./common/
-#  - ./team1/
-#  - ./team2/
-  - ./ingress/
   - ./metallb/
+  - ./ingress/
 #  - ./linkerd/
   - ./storage/
   - ./registry/
 #  - ./sealed-secrets/
 #  - ./flagger/
 #  - ./openfaas/
+  - ./team1/
