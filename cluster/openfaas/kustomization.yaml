@@ -1,6 +1,8 @@
+apiVersion: kustomize.config.k8s.io/v1beta1
+kind: Kustomization
 namespace: openfaas
 resources:
-  - namespaces.yaml
+  - 00-namespaces.yaml
   - alertmanager-cfg.yml
   - alertmanager-dep.yml
   - alertmanager-svc.yml
